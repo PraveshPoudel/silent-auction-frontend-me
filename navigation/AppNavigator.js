@@ -5,10 +5,28 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthContext } from '../context/AuthContext';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
-import TabNavigator from './TabNavigator'; // where HomeScreen, Upload etc. live
+import TabNavigator from './TabNavigator';
 import ItemDetailsScreen from '../screens/ItemDetailsScreen';
 
 const Stack = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator();
+
+const AuthenticatedStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="TabNavigator" 
+        component={TabNavigator} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="ItemDetails" 
+        component={ItemDetailsScreen} 
+        options={{ title: 'Item Details' }}
+      />
+    </Stack.Navigator>
+  );
+};
 
 export default function AppNavigator() {
   const { user } = useContext(AuthContext);
@@ -16,15 +34,12 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       {user ? (
-        <TabNavigator />
+        <AuthenticatedStack />
       ) : (
-        //<Stack.Navigator initialRouteName="Login">
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Signup" component={SignupScreen} />
-          <Stack.Screen name="ItemDetails" component={ItemDetailsScreen} />
-          
-        </Stack.Navigator>
+        <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+          <AuthStack.Screen name="Login" component={LoginScreen} />
+          <AuthStack.Screen name="Signup" component={SignupScreen} />
+        </AuthStack.Navigator>
       )}
     </NavigationContainer>
   );
